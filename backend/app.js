@@ -1,5 +1,5 @@
 const express = require("express");
-// const dotenv = require("dotenv");
+const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const transactionRoutes = require("./routes/transactionRoutes");
@@ -20,9 +20,19 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
+dotenv.config();
 // Connect MongoDB
-// mongoose.connect(process.env.MONGO_URI).then(() => console.log("MongoDB connected"));
+const mongoUri = process.env.MONGO_URI;
+if (!mongoUri) {
+  console.error("MONGO_URI is not defined in d:\\CLG_assignment\\WT_PBL\\backend\\.env");
+  process.exit(1);
+}
+mongoose.connect(mongoUri)
+  .then(() => console.log("MongoDB connected"))
+  .catch(err => {
+    console.error("MongoDB connection error:", err);
+    process.exit(1);
+  });
 
 // Routes
 app.use("/api/transactions", transactionRoutes);
